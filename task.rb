@@ -4,12 +4,13 @@ require 'pp'
 
 require_relative 'module/file_manager'
 require_relative 'module/json_parser'
-require_relative 'module/c_compile'
+require_relative 'module/c_generater'
+require_relative 'exception/compile_error'
 
 class Task
   include FileManager
   include JsonParser
-  include CCompile
+  include CGenerater
 
   def initialize(jsonPath)
     task = JsonParser.parse(jsonPath)
@@ -28,8 +29,16 @@ class Task
 
   end
 
-  def compile()
-    puts CCompile.run(@codeFile)
+  def run()
+    begin
+      CGenerater.compile(@codeFile)
+    rescue CompileError => compileErr
+      return compileErr.errCode
+    end
+
+    CGenerater.run(@codeFile)
+
+    return ALL_SUCC
   end
 
 end

@@ -1,4 +1,4 @@
 require_relative 'task'
 
-Task.new("commit.json").compile
+Task.new("commit.json").run
 
