@@ -23,7 +23,7 @@ module Run
 
     Dir.chdir(currentDir)
 
-    if status > 0
+    if status > 0 and !err.empty?
       raise err
     else
       return out

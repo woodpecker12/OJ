@@ -2,3 +2,5 @@
 code/
 target/
 log/
+*.in
+*.out

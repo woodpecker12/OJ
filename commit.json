@@ -6,6 +6,6 @@
   "problemId": "120795afa4584c0e",
   "timeLimit": 1000,
   "memoryLimit": 128,
-  "testCaseUrl": "http://127.0.0.1:8080/text.zip",
-  "code": "#include <stdio.h> \nint main() { printf(\"%s\", \"Hello World\"); }"
+  "testCaseUrl": "http://127.0.0.1:8080/1.zip",
+  "code": "#include <stdio.h> \nint main(int argc, char* argv[]) { printf(\"%s! %s\", \"Hello World\", *argv[0]); }"
 }

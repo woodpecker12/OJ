@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'json'
+
 module JsonParser
 
   def JsonParser.parse(jsonPath)
