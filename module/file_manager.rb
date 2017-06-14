@@ -1,4 +1,5 @@
 require 'find'
+require 'fileutils'
 
 module FileManager
 
@@ -21,6 +22,10 @@ module FileManager
     end
 
     return list[1..-1]
+  end
+
+  def FileManager.delete(path)
+    FileUtils.rm_rf(path)
   end
 
 end

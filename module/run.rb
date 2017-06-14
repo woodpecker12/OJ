@@ -5,6 +5,22 @@ require_relative 'log'
 module Run
   include Log
 
+  def Run.getErr(dir, cmd)
+    currentDir = Dir.getwd
+    Dir.chdir(dir)
+
+    err = nil
+
+    Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thread|
+      err = stderr.read
+    end
+
+    Dir.chdir(currentDir)
+
+    return err
+
+  end
+
   def Run.cmd(dir, cmd)
     currentDir = Dir.getwd
     Dir.chdir(dir)
@@ -12,8 +28,6 @@ module Run
     out = nil
     err = nil
     status = nil
-
-    Log.dbg("in dir => #{dir}")
 
     Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thread|
       out = stdout.read
