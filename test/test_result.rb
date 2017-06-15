@@ -2,10 +2,21 @@ TEST_FILE_ERROR = "test file error"
 
 class TestResult
 
-  def initialize(compileId, problemId)
-    @compileId = compileId
+  def initialize(id, problemId)
+    @id = id
     @problemId = problemId
     @resut = Hash.new(Hash.new)
+    @errCode = PASS
+    @startTime = Time.now
+
+  end
+
+  def recordEndTime
+    @endTime = Time.now
+  end
+
+  def updateErrCode(errCode)
+    @errCode = errCode unless @errCode == errCode
   end
 
   def add(testCaseName, result, sKey)
@@ -20,26 +31,40 @@ class TestResult
   end
 
   def function(testCaseName, result)
+    updateErrCode(RESULT_ERROR)
     add(testCaseName, result, "FunctionTest")
   end
 
   def mem(testCaseName, result)
+    updateErrCode(MEM_FLOW)
     add(testCaseName, result, "MemTest")
   end
 
   def time(testCaseName, result)
+    updateErrCode(RUN_TIME_OUT)
     add(testCaseName, result, "TimeTest")
   end
 
   def dump()
+    Log.dbg("===============================")
+    Log.dbg("id        : #{@id}")
+    Log.dbg("problemId : #{@problemId}")
+    Log.dbg("start time: #{@startTime}")
+    Log.dbg("end time  : #{@endTime}")
+    Log.dbg("error code: #{toStr(@errCode)}[#{@errCode}]")
     @resut.each do |key, value|
       Log.dbg("===============================")
       Log.dbg("test case #{key} run result: ")
       value.each do |sKey, sValue|
-        Log.dbg("#{sKey} => #{sValue}")
+        Log.dbg("#{sKey} => #{toStr(sValue)}")
       end
     end
     Log.dbg("===============================")
   end
+
+  attr_writer :errCode
+  attr_reader :endTime
+
+  private :add
 
 end

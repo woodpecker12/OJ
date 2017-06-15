@@ -106,8 +106,8 @@ class CTest
         output = testInOutList[caseName][1]
 
         next unless functionTest(caseName, input, output)
-        next unless memTest(caseName, input)
-        next unless timeTest(caseName, input)
+        memTest(caseName, input)
+        timeTest(caseName, input)
 
       end
     rescue RunError => runErr
@@ -118,5 +118,11 @@ class CTest
       raise SystemError.new(ex.message)
     end
   end
+
+  private :compile
+  private :runTest
+  private :functionTest
+  private :memTest
+  private :timeTest
 
 end

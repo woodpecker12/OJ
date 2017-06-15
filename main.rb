@@ -3,5 +3,6 @@ require_relative 'task'
 
 Environment.init
 
-Task.new("commit.json").run
+result = Task.new("commit.json").run
 
+result.dump

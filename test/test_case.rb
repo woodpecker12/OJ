@@ -72,4 +72,6 @@ class TestCase
   attr_reader :memLimit
   attr_reader :timeLimit
 
+  private :downloadTestCase
+
 end

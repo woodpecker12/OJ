@@ -26,26 +26,19 @@ class Task
     @testCaseUrl = task["testCaseUrl"]
     @codeSource = task["code"]
 
-    @codeFile = @id + ".c"
-    FileManager.write("code/" + @codeFile, task["code"])
-
   end
 
   def run()
+    result = TestResult.new(@id, @problemId)
+    
     begin
-      result = TestResult.new(@id, @problemId)
       testCase = TestCase.new(@id, @testCaseUrl, @memLimit, @timeLimit)
-
       CTest.new(@id, @codeSource, testCase, result).run
-
-      result.dump
+    rescue => ex
+      result.errCode = ex.errCode
+    ensure
+      result.recordEndTime
       return result
-    rescue CompileError => compileErr
-      return compileErr.errCode
-    rescue RunError => runErr
-      return runErr.errCode
-    rescue SystemError => sysErr
-      return sysErr.errCode
     end
   end
 
