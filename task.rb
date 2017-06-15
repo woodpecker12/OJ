@@ -1,10 +1,11 @@
 require_relative 'module/file_manager'
 require_relative 'module/json_parser'
-require_relative 'exception/compile_error'
+require_relative 'exception/exception'
 require_relative 'module/http'
 require_relative 'module/run'
-require_relative 'c_generater'
-require_relative 'test_result'
+require_relative 'test/c_test'
+require_relative 'test/test_result'
+require_relative 'test/test_case'
 
 class Task
   include FileManager
@@ -23,6 +24,7 @@ class Task
     @timeLimit = task["timeLimit"]
     @memLimit = task["memoryLimit"]
     @testCaseUrl = task["testCaseUrl"]
+    @codeSource = task["code"]
 
     @codeFile = @id + ".c"
     FileManager.write("code/" + @codeFile, task["code"])
@@ -30,44 +32,21 @@ class Task
   end
 
   def run()
-    result = TestResult.new(@id, @problemId)
-
     begin
-      return SYSTEM_ERROR unless fetchTestFiles(@testCaseUrl)
-      cpp = CGenerater.new(@codeFile, @testCaseList, @timeLimit, @memLimit, result)
-      cpp.compile
-      cpp.runTest
+      result = TestResult.new(@id, @problemId)
+      testCase = TestCase.new(@id, @testCaseUrl, @memLimit, @timeLimit)
+
+      CTest.new(@id, @codeSource, testCase, result).run
+
+      result.dump
       return result
     rescue CompileError => compileErr
       return compileErr.errCode
+    rescue RunError => runErr
+      return runErr.errCode
+    rescue SystemError => sysErr
+      return sysErr.errCode
     end
-  end
-
-  def fetchTestFiles(testFileUrl)
-
-    @testCaseList = []
-
-    begin
-      Log.dbg("fetching test case...")
-      zipFileName = "#{@id}.zip"
-      zipFilePath = "test/#{zipFileName}"
-
-      Http.getFile(testFileUrl, zipFilePath)
-      Run.cmd("test/", "unzip -o -d #{@id}/ #{zipFileName}")
-
-      FileManager.fileList("test/#{@id}").each do |item|
-        baseName = File.basename(item, ".*")
-        @testCaseList << baseName unless @testCaseList.include?(baseName)
-      end
-
-      FileManager.delete(zipFilePath) if Dir.exist?(zipFilePath)
-      Log.dbg("fetching test case done!!!")
-    rescue
-      # Dir.delete("test/#{@id}") if Dir.exist?("test/#{@id}")
-      Log.dbg("fetch test case error!!!")
-      return false
-    end
-    return true
   end
 
 end

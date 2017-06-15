@@ -1,8 +1,9 @@
-require_relative 'module/http'
-require_relative 'module/run'
-require_relative 'module/file_manager'
-require_relative 'base/environment'
-require_relative 'module/log'
+require_relative '../module/http'
+require_relative '../module/run'
+require_relative '../module/file_manager'
+require_relative '../base/environment'
+require_relative '../module/log'
+require_relative '../exception/exception'
 
 class TestCase
   include Http
@@ -10,13 +11,13 @@ class TestCase
   include FileManager
   include Log
 
-  @testCaseList = Array.new
 
   def initialize(id, testCaseUrl, memLimit, timeLimit)
     @testId = id
     @testCaseUrl = testCaseUrl
     @memLimit = memLimit
     @timeLimit = timeLimit
+    @testCaseList = Array.new
 
     downloadTestCase()
   end
@@ -39,13 +40,13 @@ class TestCase
       Log.dbg("downloading test case done!!!")
     rescue => ex
       Log.dbg("download test case error!!!")
-      raise SystemError.new(ex.mesage)
+      raise SystemError.new(ex.message)
     end
   end
 
   def fetchTestCase()
     invalidTestCase = Array.new
-    validTestInOut = Hash.new(Arrary)
+    validTestInOut = Hash.new(Array.new)
 
     begin
       @testCaseList.each do |caseName|
@@ -67,5 +68,8 @@ class TestCase
       raise SystemError.new(ex.mesage)
     end
   end
+
+  attr_reader :memLimit
+  attr_reader :timeLimit
 
 end

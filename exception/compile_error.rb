@@ -1,5 +1,3 @@
-require_relative 'error_code'
-
 class CompileError < StandardError
 
   def initialize(message)

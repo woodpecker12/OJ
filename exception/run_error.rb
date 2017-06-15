@@ -1,7 +1,8 @@
-class SystemError < RuntimeError
+class RunError < RuntimeError
+
   def initialize(message)
     @message = message
-    @errCode = SYSTEM_ERROR
+    @errCode = RUN_ERROR
   end
 
   attr_reader :message

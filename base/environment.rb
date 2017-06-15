@@ -3,7 +3,7 @@ require_relative "../module/file_manager"
 SOURCE_CODE_ROOT = "code/"
 LOG_ROOT = "log/"
 BIN_FILE_ROOT = "target/"
-TEST_CASE_ROOT = "test/"
+TEST_CASE_ROOT = "test-case/"
 
 module Environment
   include FileManager

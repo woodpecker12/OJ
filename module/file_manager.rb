@@ -1,7 +1,10 @@
 require 'find'
 require 'fileutils'
 
+require_relative 'log'
+
 module FileManager
+  include Log
 
   def FileManager.write(filePath, str)
 
@@ -10,8 +13,8 @@ module FileManager
       io.print(str)
       io.close
     rescue => ex
-      puts ex.message
-      io.close
+      Log.dbg(ex.message)
+      raise ex.message
     end
   end
 
