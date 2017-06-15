@@ -1,6 +1,6 @@
-$PASS = "pass"
-$FAIL = "fail"
-$TEST_FILE_ERROR = "test file error"
+PASS = "pass"
+FAIL = "fail"
+TEST_FILE_ERROR = "test file error"
 
 class TestResult
 

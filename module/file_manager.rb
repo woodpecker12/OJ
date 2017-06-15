@@ -28,4 +28,8 @@ module FileManager
     FileUtils.rm_rf(path)
   end
 
+  def FileManager.mkdir(dir)
+    Dir.mkdir(dir) unless Dir.exist?(dir)
+  end
+
 end

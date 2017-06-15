@@ -33,10 +33,11 @@ class Task
     result = TestResult.new(@id, @problemId)
 
     begin
-      fetchTestFiles(@testCaseUrl)
+      return SYSTEM_ERROR unless fetchTestFiles(@testCaseUrl)
       cpp = CGenerater.new(@codeFile, @testCaseList, @timeLimit, @memLimit, result)
       cpp.compile
       cpp.runTest
+      return result
     rescue CompileError => compileErr
       return compileErr.errCode
     end
