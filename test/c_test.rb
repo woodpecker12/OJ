@@ -43,21 +43,18 @@ class CTest
     end
   end
 
-  def checkMemTest(err)
-    unless err.empty?
-      errSplit = err.split(" ")
-      if errSplit[0] == "MEM"
-        raise MemFlow.new("mem actul use #{resultSplit[6]}, expect #{@testCase.memLimit}")
-      end
-    end
+  def checkHeapUsed(err)
+    puts err
+    actulUsed = err[/[\d*,]*\d\sbytes\sallocated/][/[\d*,]*\d/].delete(",").to_i
+    raise MemFlow.new("expect mem: #{@testCase.memLimit}, actul: #{actulUsed}") if actulUsed > @testCase.memLimit
   end
 
   def functionTest(caseName, inputList, output)
     begin
       Log.dbg("#{caseName} => running function test...")
-      cmd = "../timeout -m #{@testCase.memLimit} ./#{@binFile}"
+      cmd = "valgrind ./#{@binFile}"
       out, err, status = Run.cmd(BIN_FILE_ROOT, cmd, inputList, @testCase.timeLimit)
-      checkMemTest(err)
+      checkHeapUsed(err)
     rescue MemFlow => memFlow
       @result.mem(caseName, memFlow.message)
       return

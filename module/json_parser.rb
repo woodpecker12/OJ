@@ -9,8 +9,11 @@ module JsonParser
       JSON.parse(io)
     rescue => ex
       puts ex.message
-      io.close
     end
+  end
+
+  def JsonParser.parseStr(str)
+    JSON.parse(io)
   end
 
 end

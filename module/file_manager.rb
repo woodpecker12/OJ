@@ -8,11 +8,13 @@ module FileManager
 
   def FileManager.write(filePath, str)
 
+    io = nil
     begin
       io = File.open(filePath, "w")
       io.print(str)
       io.close
     rescue => ex
+      io.close
       Log.dbg(ex.message)
       raise ex.message
     end
