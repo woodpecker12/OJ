@@ -14,11 +14,13 @@ module Run
       timeout(timeout) do
         stdin, stdout, stderr, wait_thread = Open3.popen3(cmd)
 
+        sleep(1)
         inputList.each do |input|
           stdin.puts(input)
         end
         out = stdout.read
         err = stderr.read
+        p err
         status = wait_thread.value.to_i
 
       end
@@ -33,6 +35,7 @@ module Run
     # p err
     # p status
 
+    return out, err
     return out unless out.empty?
     return err unless err.empty?
     raise SystmeError.new(err) if status > 0

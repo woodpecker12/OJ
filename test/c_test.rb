@@ -31,7 +31,7 @@ class CTest
     begin
       Log.dbg('compiling...')
       FileManager.write(SOURCE_CODE_ROOT + codeFile, @codeSource)
-      out = Run.cmd(BIN_FILE_ROOT, compileCmd)
+      out, err= Run.cmd(BIN_FILE_ROOT, compileCmd)
       unless out.empty?
         FileManager.write(compileLog, out)
         raise CompileError.new("compile error")
@@ -46,16 +46,19 @@ class CTest
   def functionTest(caseName, inputList, output)
     begin
       Log.dbg("#{caseName} => running function test...")
+      p @testCase.memLimit
       cmd = "../timeout -m #{@testCase.memLimit} ./#{@binFile}"
-      result = Run.cmd(BIN_FILE_ROOT, cmd, inputList, @testCase.timeLimit)
-      splitResult = result.split(" ")
-      if splitResult[0] == "MEM"
-        raise MemFlow.new("mem actul use #{splitResult[5]}, expect #{@testCase.memLimit}")
+      result, err = Run.cmd(BIN_FILE_ROOT, cmd, inputList, @testCase.timeLimit)
+      errSplit = err.split(" ")
+      if errSplit[0] == "MEM"
+        raise MemFlow.new("mem actul use #{errSplit[6]}, expect #{@testCase.memLimit}")
       end
     rescue MemFlow => memFlow
       @result.mem(caseName, memFlow.message)
+      return
     rescue TimeoutError => timeoutErr
       @result.time(caseName, "time out for expect time: #{@testCase.timeLimit}")
+      return
     rescue => ex
       raise RunError.new(ex.message)
     end
