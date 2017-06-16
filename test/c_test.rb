@@ -4,6 +4,7 @@ require_relative '../module/log'
 require_relative 'test_result'
 require_relative '../base/environment'
 require_relative '../exception/exception'
+require_relative 'cpp_check'
 
 class CTest
   include Run
@@ -19,6 +20,9 @@ class CTest
 
   def run()
     compile
+    check = CppCheck.new
+    @result.cppCheck check.run(SOURCE_CODE_ROOT, @id + ".c")
+    check.score
     runTest
   end
 

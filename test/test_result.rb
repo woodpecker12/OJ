@@ -2,20 +2,31 @@ TEST_FILE_ERROR = "test file error"
 
 require_relative '../module/file_manager'
 
+require 'rubygems'
+require 'json'
+
 class TestResult
   include FileManager
 
+  @@timeFormat = "%Y-%m-%d %H:%M:%S"
   def initialize(id, problemId)
     @id = id
     @problemId = problemId
     @resut = Hash.new(Hash.new)
     @errCode = PASS
-    @startTime = Time.now
+    @startTime = Time.now.strftime(@@timeFormat)
+  end
 
+  def cppCheck(result)
+    @cppCheckResult = result
+  end
+
+  def cppCheckScore(score)
+    @cppCheckScore = score
   end
 
   def recordEndTime
-    @endTime = Time.now
+    @endTime = Time.now.strftime(@@timeFormat)
   end
 
   def updateErrCode(errCode)
@@ -49,23 +60,32 @@ class TestResult
   end
 
   def dump()
-    str = ""
-    str << Log.dbg("===============================")
-    str << Log.dbg("id        : #{@id}")
-    str << Log.dbg("problemId : #{@problemId}")
-    str << Log.dbg("start time: #{@startTime}")
-    str << Log.dbg("end time  : #{@endTime}")
-    str << Log.dbg("error code: #{toStr(@errCode)}[#{@errCode}]")
+    Log.dbg("===============================")
+    Log.dbg("id        : #{@id}")
+    Log.dbg("problemId : #{@problemId}")
+    Log.dbg("start time: #{@startTime}")
+    Log.dbg("end time  : #{@endTime}")
+    Log.dbg("error code: #{toStr(@errCode)}[#{@errCode}]")
     @resut.each do |key, value|
-      str << Log.dbg("===============================")
-      str << Log.dbg("test case #{key} run result: ")
+      Log.dbg("===============================")
+      Log.dbg("test case #{key} run result: ")
       value.each do |sKey, sValue|
-        str << Log.dbg("#{sKey} => #{sValue}")
+        Log.dbg("#{sKey} => #{sValue}")
       end
     end
-    str << Log.dbg("===============================")
+    Log.dbg("===============================")
 
-    FileManager.write("log/#{@id}.result", str)
+    baseReslt = Hash.new
+    baseReslt.store("id", @id)
+    baseReslt.store("problemId", @problemId)
+    baseReslt.store("startTime", @startTime)
+    baseReslt.store("endTime", @endTime)
+    baseReslt.store("errCode", @errCode)
+
+    # puts baseReslt.to_json
+    # puts @resut.to_json
+
+    FileManager.write("log/#{@id}.json", baseReslt.to_json)
   end
 
   attr_writer :errCode
