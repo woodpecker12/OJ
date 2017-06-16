@@ -48,10 +48,10 @@ class CTest
       Log.dbg("#{caseName} => running function test...")
       p @testCase.memLimit
       cmd = "../timeout -m #{@testCase.memLimit} ./#{@binFile}"
-      result, err = Run.cmd(BIN_FILE_ROOT, cmd, inputList, @testCase.timeLimit)
-      errSplit = err.split(" ")
-      if errSplit[0] == "MEM"
-        raise MemFlow.new("mem actul use #{errSplit[6]}, expect #{@testCase.memLimit}")
+      result = Run.cmd(BIN_FILE_ROOT, cmd, inputList, @testCase.timeLimit)
+      resultSplit = result.split(" ")
+      if resultSplit[0] == "MEM"
+        raise MemFlow.new("mem actul use #{resultSplit[6]}, expect #{@testCase.memLimit}")
       end
     rescue MemFlow => memFlow
       @result.mem(caseName, memFlow.message)

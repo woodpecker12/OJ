@@ -36,6 +36,7 @@ class Task
       CTest.new(@id, @codeSource, testCase, result).run
     rescue => ex
       result.errCode = ex.errCode
+      Log.dbg(ex.message)
     ensure
       result.recordEndTime
       return result

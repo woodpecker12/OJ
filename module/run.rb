@@ -11,7 +11,7 @@ module Run
     status = nil
 
     begin
-      timeout(timeout) do
+      Timeout.timeout(timeout) do
         stdin, stdout, stderr, wait_thread = Open3.popen3(cmd)
 
         sleep(1)
@@ -35,7 +35,6 @@ module Run
     # p err
     # p status
 
-    return out, err
     return out unless out.empty?
     return err unless err.empty?
     raise SystmeError.new(err) if status > 0

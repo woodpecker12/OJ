@@ -16,7 +16,7 @@ class TestResult
   end
 
   def updateErrCode(errCode)
-    @errCode = errCode unless @errCode == errCode
+    @errCode = errCode if @errCode == PASS
   end
 
   def add(testCaseName, result, sKey)
@@ -31,14 +31,17 @@ class TestResult
   end
 
   def function(testCaseName, result)
+    updateErrCode(RESULT_ERROR)
     add(testCaseName, result, "FunctionTest")
   end
 
   def mem(testCaseName, result)
+    updateErrCode(MEM_FLOW)
     add(testCaseName, result, "MemTest")
   end
 
   def time(testCaseName, result)
+    updateErrCode(RUN_TIME_OUT)
     add(testCaseName, result, "TimeTest")
   end
 
