@@ -31,8 +31,8 @@ class CTest
     begin
       Log.dbg('compiling...')
       FileManager.write(SOURCE_CODE_ROOT + codeFile, @codeSource)
-      out, err= Run.cmd(BIN_FILE_ROOT, compileCmd)
-      unless out.empty?
+      out, err, status = Run.cmd(BIN_FILE_ROOT, compileCmd)
+      if !out.empty? or status != 0
         FileManager.write(compileLog, out)
         raise CompileError.new("compile error")
       end
@@ -43,15 +43,21 @@ class CTest
     end
   end
 
+  def checkMemTest(err)
+    unless err.empty?
+      errSplit = err.split(" ")
+      if errSplit[0] == "MEM"
+        raise MemFlow.new("mem actul use #{resultSplit[6]}, expect #{@testCase.memLimit}")
+      end
+    end
+  end
+
   def functionTest(caseName, inputList, output)
     begin
       Log.dbg("#{caseName} => running function test...")
       cmd = "../timeout -m #{@testCase.memLimit} ./#{@binFile}"
-      result = Run.cmd(BIN_FILE_ROOT, cmd, inputList, @testCase.timeLimit)
-      resultSplit = result.split(" ")
-      if resultSplit[0] == "MEM"
-        raise MemFlow.new("mem actul use #{resultSplit[6]}, expect #{@testCase.memLimit}")
-      end
+      out, err, status = Run.cmd(BIN_FILE_ROOT, cmd, inputList, @testCase.timeLimit)
+      checkMemTest(err)
     rescue MemFlow => memFlow
       @result.mem(caseName, memFlow.message)
       return
@@ -62,8 +68,8 @@ class CTest
       raise RunError.new(ex.message)
     end
 
-    unless result == output
-      @result.function(caseName, "expect: #{output}, actul: #{result}")
+    unless out == output
+      @result.function(caseName, "expect: #{output}, actul: #{out}")
     end
   end
 

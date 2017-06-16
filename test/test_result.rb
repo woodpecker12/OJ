@@ -1,6 +1,9 @@
 TEST_FILE_ERROR = "test file error"
 
+require_relative '../module/file_manager'
+
 class TestResult
+  include FileManager
 
   def initialize(id, problemId)
     @id = id
@@ -46,20 +49,23 @@ class TestResult
   end
 
   def dump()
-    Log.dbg("===============================")
-    Log.dbg("id        : #{@id}")
-    Log.dbg("problemId : #{@problemId}")
-    Log.dbg("start time: #{@startTime}")
-    Log.dbg("end time  : #{@endTime}")
-    Log.dbg("error code: #{toStr(@errCode)}[#{@errCode}]")
+    str = ""
+    str << Log.dbg("===============================")
+    str << Log.dbg("id        : #{@id}")
+    str << Log.dbg("problemId : #{@problemId}")
+    str << Log.dbg("start time: #{@startTime}")
+    str << Log.dbg("end time  : #{@endTime}")
+    str << Log.dbg("error code: #{toStr(@errCode)}[#{@errCode}]")
     @resut.each do |key, value|
-      Log.dbg("===============================")
-      Log.dbg("test case #{key} run result: ")
+      str << Log.dbg("===============================")
+      str << Log.dbg("test case #{key} run result: ")
       value.each do |sKey, sValue|
-        Log.dbg("#{sKey} => #{sValue}")
+        str << Log.dbg("#{sKey} => #{sValue}")
       end
     end
-    Log.dbg("===============================")
+    str << Log.dbg("===============================")
+
+    FileManager.write("log/#{@id}.result", str)
   end
 
   attr_writer :errCode

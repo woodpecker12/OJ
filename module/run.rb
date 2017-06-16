@@ -6,9 +6,9 @@ module Run
     currentDir = Dir.getwd
     Dir.chdir(dir)
 
-    out = nil
-    err = nil
-    status = nil
+    out = ""
+    err = ""
+    status = 0
 
     stdout = nil
 
@@ -35,12 +35,8 @@ module Run
     Dir.chdir(currentDir)
     # p out
     # p err
-    # p status
 
-    return out unless out.empty?
-    return err unless err.empty?
-    raise SystmeError.new(err) if status > 0
-    return ""
+    return out, err, status
 
   end
 
