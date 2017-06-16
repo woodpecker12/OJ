@@ -32,7 +32,7 @@ class CTest
       Log.dbg('compiling...')
       FileManager.write(SOURCE_CODE_ROOT + codeFile, @codeSource)
       out = Run.cmd(BIN_FILE_ROOT, compileCmd)
-      unless out.empty? then
+      unless out.empty?
         FileManager.write(compileLog, out)
         raise CompileError.new("compile error")
       end
@@ -43,56 +43,25 @@ class CTest
     end
   end
 
-  def functionTest(caseName, input, output)
+  def functionTest(caseName, inputList, output)
     begin
       Log.dbg("#{caseName} => running function test...")
-      result = Run.cmd(BIN_FILE_ROOT, "./#{@binFile} #{input}")
+      cmd = "../timeout -m #{@testCase.memLimit} ./#{@binFile}"
+      result = Run.cmd(BIN_FILE_ROOT, cmd, inputList, @testCase.timeLimit)
+      splitResult = result.split(" ")
+      if splitResult[0] == "MEM"
+        raise MemFlow.new("mem actul use #{splitResult[5]}, expect #{@testCase.memLimit}")
+      end
+    rescue MemFlow => memFlow
+      @result.mem(caseName, memFlow.message)
+    rescue TimeoutError => timeoutErr
+      @result.time(caseName, "time out for expect time: #{@testCase.timeLimit}")
     rescue => ex
       raise RunError.new(ex.message)
     end
 
-    if result == output
-      @result.function(caseName, PASS)
-      return true
-    else
-      Log.dbg("test #{caseName} fail : expect[#{output}], actual[#{result}]")
-      @result.function(caseName, RESULT_ERROR)
-      return false
-    end
-
-  end
-
-  def memTest(caseName, input)
-    begin
-      Log.dbg("#{caseName} => running mem test...")
-      result = Run.cmd(BIN_FILE_ROOT, "../timeout -m #{@testCase.memLimit} ./#{@binFile} #{input}")
-    rescue => ex
-      raise RunError.new(ex.message)
-    end
-
-    if result.include?("FINISHED")
-      @result.mem(caseName, PASS)
-      return true
-    else
-      @result.mem(caseName, MEM_FLOW)
-      return false
-    end
-  end
-
-  def timeTest(caseName, input)
-    begin
-      Log.dbg("#{caseName} => running time test...")
-      result = Run.cmd(BIN_FILE_ROOT, "../timeout -t #{@testCase.timeLimit} ./#{@binFile} #{input}")
-    rescue => ex
-      raise RunError.new(ex.message)
-    end
-
-    if result.include?("FINISHED")
-      @result.time(caseName, PASS)
-      return true
-    else
-      @result.time(caseName, RUN_TIME_OUT)
-      return false
+    unless result == output
+      @result.function(caseName, "expect: #{output}, actul: #{result}")
     end
   end
 
@@ -100,15 +69,12 @@ class CTest
     Log.dbg('running all test...')
 
     begin
-      testInOutList, invalidTestList = @testCase.fetchTestCase
+      testInOutList = @testCase.fetchTestCase
       testInOutList.each_key do |caseName|
         input = testInOutList[caseName][0]
         output = testInOutList[caseName][1]
 
-        next unless functionTest(caseName, input, output)
-        memTest(caseName, input)
-        timeTest(caseName, input)
-
+        functionTest(caseName, input, output)
       end
     rescue RunError => runErr
       Log.dbg("run #{@binFile} test error: ")
@@ -122,7 +88,5 @@ class CTest
   private :compile
   private :runTest
   private :functionTest
-  private :memTest
-  private :timeTest
 
 end

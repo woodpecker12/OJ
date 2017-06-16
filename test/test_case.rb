@@ -39,31 +39,27 @@ class TestCase
 
       Log.dbg("downloading test case done!!!")
     rescue => ex
+      Log.dbg(ex.message)
       Log.dbg("download test case error!!!")
       raise SystemError.new(ex.message)
     end
   end
 
   def fetchTestCase()
-    invalidTestCase = Array.new
-    validTestInOut = Hash.new(Array.new)
-
+    testInOutMap = Hash.new(Array.new)
     begin
       @testCaseList.each do |caseName|
         testIn = "#{TEST_CASE_ROOT}#{@testId}/#{caseName}.in"
         testOut = "#{TEST_CASE_ROOT}#{@testId}/#{caseName}.out"
 
-        unless File.exist?(testIn) and File.exist?(testOut) then
-          invalidTestCase << caseName
-          next
-        end
-
         input = File.open(testIn).readline
         output = File.open(testOut).readline
-        validTestInOut.store(caseName, [input, output])
+        inputList = input[0...-1].split(",")
+        inputList << ";"
+        testInOutMap.store(caseName, [inputList, output])
       end
 
-      return validTestInOut, invalidTestCase
+      return testInOutMap
     rescue => ex
       raise SystemError.new(ex.mesage)
     end

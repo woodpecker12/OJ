@@ -21,8 +21,8 @@ class Task
     @createTime = task["createTime"]
     @language = task["language"]
     @problemId = task["problemId"]
-    @timeLimit = task["timeLimit"]
-    @memLimit = task["memoryLimit"]
+    @timeLimit = task["timeLimit"] / 1000 == 0 ? 1 : task["timeLimit"] / 1000
+    @memLimit = task["memoryLimit"] * 1024
     @testCaseUrl = task["testCaseUrl"]
     @codeSource = task["code"]
 

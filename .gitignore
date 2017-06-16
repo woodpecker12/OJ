@@ -4,3 +4,4 @@ target/
 log/
 *.in
 *.out
+*.zip

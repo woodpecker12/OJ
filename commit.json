@@ -1,11 +1,1 @@
-{
-  "id": "asda2asf3ad344asd",
-  "userId": 2,
-  "createTime": 1496734864630,
-  "language": 1,
-  "problemId": "120795afa4584c0e",
-  "timeLimit": 1000,
-  "memoryLimit": 128,
-  "testCaseUrl": "http://127.0.0.1:8000/1.zip",
-  "code": "#include <stdio.h> \nint main(int argc, char* argv[]) { printf(\"%s! %s\", \"Hello World\", argv[1]); }"
-}
+{"id":"54bebfb93b664181","userId":12,"createTime":1497582053306,"language":1,"problemId":"aa577243a20b4e59","timeLimit":30000,"memoryLimit":20,"testCaseUrl":"http://10.92.203.38:81/2017/06/16/b5ff111c4c414763a39812d57515c32b.zip","code":"#include <stdio.h>\n\nint main(int argc, char* argv[])  \n{\n\tint index = 0;\n\tint c = 0;\n    int array[2] = {0};\n\t\n    while ((scanf(\"%d\",&array[index]) != EOF) && getchar() != ';')  \n    {  \n        index++;  \n    }   \n\tc = array[0] - array[1];\n\t\n\tprintf(\"%d\", c);\n\t\n    return 0;  \n}"}

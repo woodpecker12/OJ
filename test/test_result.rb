@@ -31,17 +31,14 @@ class TestResult
   end
 
   def function(testCaseName, result)
-    updateErrCode(RESULT_ERROR)
     add(testCaseName, result, "FunctionTest")
   end
 
   def mem(testCaseName, result)
-    updateErrCode(MEM_FLOW)
     add(testCaseName, result, "MemTest")
   end
 
   def time(testCaseName, result)
-    updateErrCode(RUN_TIME_OUT)
     add(testCaseName, result, "TimeTest")
   end
 
@@ -56,7 +53,7 @@ class TestResult
       Log.dbg("===============================")
       Log.dbg("test case #{key} run result: ")
       value.each do |sKey, sValue|
-        Log.dbg("#{sKey} => #{toStr(sValue)}")
+        Log.dbg("#{sKey} => #{sValue}")
       end
     end
     Log.dbg("===============================")
