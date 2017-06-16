@@ -10,6 +10,8 @@ module Run
     err = nil
     status = nil
 
+    stdout = nil
+
     begin
       Timeout.timeout(timeout) do
         stdin, stdout, stderr, wait_thread = Open3.popen3(cmd)
@@ -20,14 +22,14 @@ module Run
         end
         out = stdout.read
         err = stderr.read
-        p err
         status = wait_thread.value.to_i
 
       end
     rescue TimeoutError =>  timeoutErr
       raise timeoutErr
     rescue => ex
-      raise SystemError.new(ex.message)
+      out = stdout.read
+      raise SystemError.new(ex.message) if out.empty?
     end
 
     Dir.chdir(currentDir)

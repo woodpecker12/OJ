@@ -46,7 +46,6 @@ class CTest
   def functionTest(caseName, inputList, output)
     begin
       Log.dbg("#{caseName} => running function test...")
-      p @testCase.memLimit
       cmd = "../timeout -m #{@testCase.memLimit} ./#{@binFile}"
       result = Run.cmd(BIN_FILE_ROOT, cmd, inputList, @testCase.timeLimit)
       resultSplit = result.split(" ")
