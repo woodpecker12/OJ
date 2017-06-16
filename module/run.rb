@@ -30,14 +30,12 @@ module Run
     rescue => ex
       out = stdout.read
       raise SystemError.new(ex.message) if out.empty?
+    ensure
+      Dir.chdir(currentDir)
     end
-
-    Dir.chdir(currentDir)
     # p out
     # p err
-
     return out, err, status
-
   end
 
 end

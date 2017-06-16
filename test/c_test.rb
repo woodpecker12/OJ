@@ -44,7 +44,6 @@ class CTest
   end
 
   def checkHeapUsed(err)
-    puts err
     actulUsed = err[/[\d*,]*\d\sbytes\sallocated/][/[\d*,]*\d/].delete(",").to_i
     raise MemFlow.new("expect mem: #{@testCase.memLimit}, actul: #{actulUsed}") if actulUsed > @testCase.memLimit
   end
@@ -60,7 +59,7 @@ class CTest
       return
     rescue TimeoutError => timeoutErr
       @result.time(caseName, "time out for expect time: #{@testCase.timeLimit}")
-      return
+      raise timeoutErr
     rescue => ex
       raise RunError.new(ex.message)
     end
@@ -85,6 +84,8 @@ class CTest
       Log.dbg("run #{@binFile} test error: ")
       Log.dbg(runErr.message)
       raise runErr
+    rescue TimeoutError => timeoutErr
+      return
     rescue => ex
       raise SystemError.new(ex.message)
     end
