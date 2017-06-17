@@ -15,7 +15,6 @@ module Run
     begin
       Timeout.timeout(timeout) do
         stdin, stdout, stderr, wait_thread = Open3.popen3(cmd)
-
         # sleep(1)
         inputList.each do |input|
           stdin.puts(input)
@@ -32,9 +31,9 @@ module Run
       raise SystemError.new(ex.message) if out.empty?
     ensure
       Dir.chdir(currentDir)
-      return out, err, status
     end
     # p out
+    return out, err, status
     # p err
   end
 
