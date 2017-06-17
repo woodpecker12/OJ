@@ -10,7 +10,7 @@ class CppCheck
       list = log.each_line {|line|
         @all.keys.each{|key| @all[key]+=1 if line=~/(#{key[0..-1]})/}
       }
-      return @all
+      return log
    end
    
    def score 

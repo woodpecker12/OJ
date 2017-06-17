@@ -32,10 +32,10 @@ module Run
       raise SystemError.new(ex.message) if out.empty?
     ensure
       Dir.chdir(currentDir)
+      return out, err, status
     end
     # p out
     # p err
-    return out, err, status
   end
 
 end

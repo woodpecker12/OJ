@@ -15,6 +15,9 @@ class TestResult
     @resut = Hash.new(Hash.new)
     @errCode = PASS
     @startTime = Time.now.strftime(@@timeFormat)
+    @compileLog = ""
+    @cppCheckResult = ""
+    @cppCheckScore = 0
   end
 
   def cppCheck(result)
@@ -31,6 +34,10 @@ class TestResult
 
   def updateErrCode(errCode)
     @errCode = errCode if @errCode == PASS
+  end
+
+  def compileLog(log)
+    @compileLog = log
   end
 
   def add(testCaseName, result, sKey)
@@ -75,17 +82,26 @@ class TestResult
     end
     Log.dbg("===============================")
 
-    baseReslt = Hash.new
-    baseReslt.store("id", @id)
-    baseReslt.store("problemId", @problemId)
-    baseReslt.store("startTime", @startTime)
-    baseReslt.store("endTime", @endTime)
-    baseReslt.store("errCode", @errCode)
+    finally = Hash.new
+    finally.store("id", @id)
+    finally.store("problemId", @problemId)
+    finally.store("startTime", @startTime)
+    finally.store("endTime", @endTime)
+    finally.store("errCode", @errCode)
+    finally.store("compileLog", @compileLog)
 
-    # puts baseReslt.to_json
-    # puts @resut.to_json
+    testResult = ""
+    @resut.each_key do |key|
+      @resut[key].each do |sKey, sValue|
+        testResult += "test case #{key} => " + sKey + ": " + sValue + " \n"
+      end
+    end
+    finally.store("testResult", testResult)
 
-    FileManager.write("log/#{@id}.json", baseReslt.to_json)
+    finally.store("cppcheckResult", @cppCheckResult)
+    finally.store("score", @cppCheckScore)
+
+    FileManager.write("log/#{@id}.json", finally.to_json)
   end
 
   attr_writer :errCode

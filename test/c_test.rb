@@ -21,8 +21,8 @@ class CTest
   def run()
     compile
     check = CppCheck.new
-    @result.cppCheck check.run(SOURCE_CODE_ROOT, @id + ".c")
-    check.score
+    @result.cppCheck(check.run(SOURCE_CODE_ROOT, @id + ".c"))
+    @result.cppCheckScore(check.score)
     runTest
   end
 
@@ -36,7 +36,8 @@ class CTest
       Log.dbg('compiling...')
       FileManager.write(SOURCE_CODE_ROOT + codeFile, @codeSource)
       out, err, status = Run.cmd(BIN_FILE_ROOT, compileCmd)
-      if !out.empty? or status != 0
+      if status != 0
+        @result.compileLog("" + out + err)
         FileManager.write(compileLog, out)
         raise CompileError.new("compile error")
       end
